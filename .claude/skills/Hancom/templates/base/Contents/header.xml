@@ -308,7 +308,7 @@
         <hh:outline type="NONE"/>
         <hh:shadow type="NONE" color="#C0C0C0" offsetX="10" offsetY="10"/>
       </hh:charPr>
-      <hh:charPr id="1" height="1600" textColor="#000000" shadeColor="none" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="10">
+      <hh:charPr id="1" height="2000" textColor="#000000" shadeColor="none" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="10">
         <hh:fontRef hangul="6" latin="5" hanja="5" japanese="5" other="5" symbol="5" user="5"/>
         <hh:ratio hangul="100" latin="100" hanja="100" japanese="100" other="100" symbol="100" user="100"/>
         <hh:spacing hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/>
@@ -341,7 +341,7 @@
         <hh:outline type="NONE"/>
         <hh:shadow type="NONE" color="#C0C0C0" offsetX="10" offsetY="10"/>
       </hh:charPr>
-      <hh:charPr id="4" height="1500" textColor="#000000" shadeColor="#FFD700" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="10">
+      <hh:charPr id="4" height="1800" textColor="#000000" shadeColor="#FFD700" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="10">
         <hh:fontRef hangul="5" latin="6" hanja="4" japanese="4" other="4" symbol="4" user="4"/>
         <hh:ratio hangul="100" latin="100" hanja="100" japanese="100" other="100" symbol="100" user="100"/>
         <hh:spacing hangul="-2" latin="-2" hanja="-2" japanese="-2" other="-2" symbol="-2" user="-2"/>
@@ -453,7 +453,7 @@
         <hh:outline type="NONE"/>
         <hh:shadow type="NONE" color="#C0C0C0" offsetX="10" offsetY="10"/>
       </hh:charPr>
-      <hh:charPr id="14" height="1500" textColor="#000000" shadeColor="none" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="8">
+      <hh:charPr id="14" height="2000" textColor="#000000" shadeColor="none" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="8">
         <hh:fontRef hangul="6" latin="5" hanja="5" japanese="5" other="5" symbol="5" user="5"/>
         <hh:ratio hangul="98" latin="98" hanja="98" japanese="98" other="98" symbol="98" user="98"/>
         <hh:spacing hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/>
@@ -535,7 +535,7 @@
         <hh:outline type="NONE"/>
         <hh:shadow type="NONE" color="#C0C0C0" offsetX="10" offsetY="10"/>
       </hh:charPr>
-      <hh:charPr id="21" height="1400" textColor="#000000" shadeColor="#87CEEB" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="10">
+      <hh:charPr id="21" height="1800" textColor="#000000" shadeColor="#87CEEB" useFontSpace="0" useKerning="0" symMark="NONE" borderFillIDRef="10">
         <hh:fontRef hangul="4" latin="4" hanja="4" japanese="4" other="4" symbol="4" user="4"/>
         <hh:ratio hangul="100" latin="100" hanja="100" japanese="100" other="100" symbol="100" user="100"/>
         <hh:spacing hangul="0" latin="0" hanja="0" japanese="0" other="0" symbol="0" user="0"/>

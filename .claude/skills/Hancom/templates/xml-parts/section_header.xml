@@ -5,7 +5,7 @@
         <hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="{bf_green}">
           <hp:cellAddr colAddr="0" rowAddr="0"/>
           <hp:cellSpan colSpan="1" rowSpan="1"/>
-          <hp:cellSz width="3500" height="1600"/>
+          <hp:cellSz width="5000" height="1600"/>
           <hp:cellMargin left="283" right="283" top="141" bottom="141"/>
           <hp:subList>
             <hp:p paraPrIDRef="{table_cell}" styleIDRef="0">
@@ -18,7 +18,7 @@
         <hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="{bf_cell}">
           <hp:cellAddr colAddr="1" rowAddr="0"/>
           <hp:cellSpan colSpan="1" rowSpan="1"/>
-          <hp:cellSz width="16500" height="1600"/>
+          <hp:cellSz width="37520" height="1600"/>
           <hp:cellMargin left="283" right="283" top="141" bottom="141"/>
           <hp:subList>
             <hp:p paraPrIDRef="{table_cell}" styleIDRef="0">

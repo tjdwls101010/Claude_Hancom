@@ -155,10 +155,10 @@ def emit_bullet(text, indent=False):
     bold_match2 = re.match(r'\*\*(.+?)\*\*:\s*(.*)', text)
 
     if indent:
-        # Deeper sub-item: ▷ with extra indent
-        runs = _split_bold_runs(text, CHAR['body'], CHAR['bold'])
+        # Deeper sub-item: ▷ with extra indent, 12pt font
+        runs = _split_bold_runs(text, CHAR['table_body'], CHAR['table_head'])
         return p_multi_run(PARA['sub_item'], [
-            (CHAR['body'], '  ▷ '),
+            (CHAR['table_body'], '  ▷ '),
         ] + runs)
 
     if bold_match:
@@ -374,7 +374,7 @@ def convert(md_text, md_dir=''):
                 i += 1
             i += 1  # skip closing tag
 
-            if not is_first_element:
+            if not is_first_element and xml_parts and xml_parts[-1] != spacer():
                 xml_parts.append(spacer())
             xml_parts.append(emit_box(box_lines, box_type))
             xml_parts.append(spacer())
@@ -396,7 +396,7 @@ def convert(md_text, md_dir=''):
                 image_files.append(os.path.abspath(img_path))
                 # Generate image ID from filename
                 img_id = re.sub(r'[^A-Za-z0-9_]', '_', os.path.splitext(filename)[0])
-                if not is_first_element:
+                if not is_first_element and xml_parts and xml_parts[-1] != spacer():
                     xml_parts.append(spacer())
                 xml_parts.append(emit_image(img_id))
                 xml_parts.append(spacer())
@@ -429,7 +429,7 @@ def convert(md_text, md_dir=''):
 
         if stripped.startswith('#### '):
             heading = stripped[5:].strip()
-            if not is_first_element:
+            if not is_first_element and xml_parts and xml_parts[-1] != spacer():
                 xml_parts.append(spacer())
             xml_parts.append(emit_heading4(heading))
             xml_parts.append(spacer())
@@ -440,7 +440,7 @@ def convert(md_text, md_dir=''):
 
         if stripped.startswith('### '):
             heading = stripped[4:].strip()
-            if not is_first_element:
+            if not is_first_element and xml_parts and xml_parts[-1] != spacer():
                 xml_parts.append(spacer())
             xml_parts.append(emit_heading3(heading))
             xml_parts.append(spacer())
@@ -452,7 +452,7 @@ def convert(md_text, md_dir=''):
         if stripped.startswith('## '):
             heading = stripped[3:].strip()
             # ## always starts a new page (unless it's the first element)
-            if not is_first_element:
+            if not is_first_element and xml_parts and xml_parts[-1] != spacer():
                 xml_parts.append(spacer())
             result = emit_section_header(heading)
             # Inject pageBreak="1" if not the first element
@@ -475,7 +475,7 @@ def convert(md_text, md_dir=''):
                 i += 1
             rows = parse_table_block(table_lines)
             if rows:
-                if not is_first_element:
+                if not is_first_element and xml_parts and xml_parts[-1] != spacer():
                     xml_parts.append(spacer())
                 xml_parts.append(emit_table(rows, style=pending_table_style))
                 xml_parts.append(spacer())
