@@ -6,6 +6,48 @@ One-pass semantic preparation: restructure content for formal documents and add 
 
 Work from a copy of the original file (`cleaned_*.md`). Read the entire document first, assess the document type, then Edit() to apply all changes in one pass.
 
+## First check: does the input have markdown structure?
+
+If the file has `#` headings, `- ` bullets, or `| tables |`, skip this section — the input already has structure. But if it's plain text (common with web copy-pastes, OCR output, or email forwards), you need to give it minimal markdown structure before anything else.
+
+### Remove web scraping artifacts
+
+Copy-pasted web articles often carry metadata and UI remnants that aren't part of the content:
+
+```
+오피니언 경제직필                    ← category label
+종목보다 포트폴리오, 주가보다 경제    ← actual title
+수정 2026.03.24 19:53              ← timestamp
+펼치기/접기                         ← UI element
+이상민 나라살림연구소 수석연구위원     ← author info
+기사 읽기                          ← UI element
+기사를 재생 중이에요기사 읽기         ← UI element
+
+가파르게 오르던 주식이 최근 조정을 받는다...
+```
+
+Strip category labels, timestamps, UI remnants ("펼치기/접기", "기사 읽기", "공유하기"), and duplicate lines. The title is usually the most descriptive short line near the top — not the category, not the date. Author/source info can be kept at the end or removed depending on context.
+
+### Identify the title
+
+Every document needs at least a `#` title. Look for the line that best captures what the document is about — typically a headline or subject line near the top.
+
+```markdown
+# 종목보다 포트폴리오, 주가보다 경제
+
+가파르게 오르던 주식이 최근 조정을 받는다...
+```
+
+### Apply structure where readability demands it
+
+The guiding principle: **maximize readability of the final Hancom document while preserving the original content.** Web scraping often strips markdown structure (bullets become plain text, headings become plain lines). If you can tell from the content's nature that structure was lost, restore it. If the content is genuinely continuous prose, keep it as prose.
+
+Examples of good judgment:
+- A list of 5 entities with parallel descriptions → probably was bulleted originally, restore `- `
+- A series of paragraphs each making a distinct argument in sequence → genuinely prose, keep as paragraphs
+- Repetitive data across items (name, date, amount repeated 10 times) → table would improve readability even if the original wasn't tabular
+- A short editorial with one clear title and no natural sections → just `#` title, rest as body paragraphs — don't invent subheadings
+
 ## The core judgment: table or bullets?
 
 Markdown is optimized for fast authoring — bullets are the default tool. Formal Korean documents are optimized for structured reading — tables are the default tool. The question is always: does the **nature of the information** call for restructuring?
@@ -104,14 +146,16 @@ The converter maps markdown headings to specific visual patterns:
 
 ```
 #    → Document title (one per document, centered, 26pt)
-##   → Section header (green table with number, page break)
-       Numbered: "## 1. Analysis Results" → section header table
-       Unnumbered: "## Key Findings" → ▢ gold shade heading
-###  → ▢ Major topic (gold shade, bold)
-#### → ○ Sub-topic (sky blue shade, bold)
+##   → Section header table (green table, always starts a new page)
+       "## 1. Analysis Results" → table with number + title
+       "## Key Findings" → table with title only
+###  → ▢ Sub-section topic (gold shade, bold, NO page break)
+#### → ○ Sub-topic (sky blue shade, bold, NO page break)
 ```
 
-Numbering matters: `## 3. Section Name` produces a formal section header table (green background, page number cell). `## Section Name` without a number produces a simpler ▢-style heading.
+The key question: **"Does this heading deserve a new page?"** If yes → `##`. If no → `###`.
+
+Article subheadings (●, ■, ◆ markers), topic shifts within a section, and minor structural markers should use `###`. Only document-level chapter divisions that warrant a fresh page should use `##`.
 
 ## Annotations
 
@@ -214,6 +258,7 @@ The program operates in General/Technical and Local tracks.
 
 | Type | Effort | Typical actions |
 |------|:------:|-----------------|
+| Plain text (web copy-paste) | **LOW** | Remove artifacts, identify title as `#`, restore lost structure where evident |
 | Technical report / analysis | **HIGH** | Bullet→table conversions, condensing, multiple annotations |
 | News digest | **LOW** | Obsidian cleanup, maybe pagebreaks between articles |
 | Column / editorial | **MINIMAL** | Emoji removal at most, keep prose intact |

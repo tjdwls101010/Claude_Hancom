@@ -66,11 +66,9 @@ This hierarchy is not decorative — it's a standardized information architectur
 
 ## Section Headers
 
-`## N. Section Name` (numbered sections) produce a formal section header: a green-filled table with the section number in one cell and the title in another. These always start on a new page (except the first one).
+`##` always produces a section header table (green-filled) and starts on a new page (except the first one). Numbered sections like `## 1. Analysis Results` show the number in a separate cell; unnumbered sections like `## Key Findings` show the title only.
 
-`## Section Name` without a number produces a ▢-style heading instead — bold text with gold shade, no table, no page break. Use this for informal sections that don't warrant the full section header treatment.
-
-The distinction matters: numbered sections are the document's backbone (like chapter headings in a book), while unnumbered sections are lighter structural markers within chapters.
+The distinction between `##` and `###` matters: `##` is for major divisions that deserve their own page (like chapter headings in a book). `###` is for sub-section topics within a page (▢ gold shade, no page break). Most article subheadings belong at the `###` level.
 
 ## Professional Techniques
 

@@ -88,7 +88,7 @@ SEC_OPEN = ('<hs:sec xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section"'
 
 SEC_CLOSE = '</hs:sec>'
 
-FULL_WIDTH = 48190  # content area in HWPUNIT
+FULL_WIDTH = 42520  # content area in HWPUNIT (A4 210mm - 30mm×2 margins)
 
 
 def p(para_id, char_id, text, page_break=False):
@@ -112,10 +112,14 @@ def spacer():
 
 
 def emit_title(text):
-    """Emit main document title (centered, 26pt bold)."""
+    """Emit main document title (centered, 26pt bold) wrapped in info box."""
     # Remove emoji if present
     clean = re.sub(r'[\U0001F000-\U0001FFFF\u2600-\u27FF\u2B50]', '', text).strip()
-    return p(PARA['center'], CHAR['title'], clean)
+    title_p = p(PARA['center'], CHAR['title'], clean)
+    return _load_template('box').format(
+        bf=BF['info'], width=FULL_WIDTH, char_small=CHAR['small'],
+        bf_cell=BF['cell'], content=title_p
+    )
 
 
 def emit_body(text):
@@ -190,20 +194,17 @@ def emit_numbered_item(number, text):
 
 
 def emit_section_header(text):
-    """Emit ## heading as section header (green table or ▢ gold shade).
-    If text has a number prefix (e.g., '1. 개요'), emit green table.
-    Otherwise emit ▢ gold shade heading."""
+    """Emit ## heading as section header table (always green table).
+    Numbered: '1. 개요' → table with number + title.
+    Unnumbered: '핵심 발견사항' → table with title only (empty number cell)."""
     num_match = re.match(r'^(\d+)[\.\s]+(.+)', text.strip())
     if num_match:
         number = num_match.group(1)
         title = num_match.group(2).strip()
-        return _emit_section_header_table(number, title)
     else:
-        clean = text.strip()
-        return p_multi_run(PARA['bullet'], [
-            (CHAR['body'], '▢ '),
-            (CHAR['shade'], clean),
-        ])
+        number = ''
+        title = text.strip()
+    return _emit_section_header_table(number, title)
 
 
 def _emit_section_header_table(number, title):
