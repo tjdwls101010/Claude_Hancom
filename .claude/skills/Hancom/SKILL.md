@@ -22,10 +22,9 @@ Three rules for Cowork compatibility:
    because the linter writes to it in-place, and you Edit() it afterward for
    normalization. The final `.hwpx` output must also go to a writable directory.
    Never create working files in the upload directory.
-2. **Default to Edit() for subsequent changes** — each Edit() transmits only the
-   changed portion (~100 tokens vs ~2000 for full rewrite). Use Write() only when
-   changes are so pervasive (30+ edits) that cumulative Edit() overhead exceeds
-   a single Write().
+2. **All modifications use Edit(), never Write()** — each Edit() transmits only
+   the changed portion. 15 targeted edits on a 100-line file ≈ 750 tokens.
+   Rewriting the same file with Write() ≈ 6000 tokens. Always use Edit().
 3. **Script paths are absolute in Cowork** — the skill directory is at a long
    path under `/sessions/.../mnt/.remote-plugins/...`. Use the full resolved path
    when calling scripts via Bash.
@@ -56,28 +55,18 @@ The `-o` flag reads the original, applies lint rules, and writes the result to
 a writable directory — in Cowork, that's the session working directory, not the
 upload directory.
 
+**Do not Read() the input file before this step.** The linter is purely mechanical
+— it needs no understanding of the content. You will Read() the linted
+`cleaned_original.md` in Step 2, so reading the original here wastes tokens.
+
 Lint rules: heading level gaps, consecutive blank lines, blank lines between list items, multiple spaces, trailing whitespace, EOF newline. No semantic judgment — purely mechanical.
 
 ### Step 2: Prepare content (normalize + annotate)
 
-Read `references/content-prep-guide.md`. Then apply changes to `cleaned_original.md`.
+Read `references/content-prep-guide.md`, then Read() `cleaned_original.md`. Apply all changes
+using **Edit() only**. Never use Write() to rewrite the file.
 
-**Choose Edit() or Write() based on the scope of changes:**
-
-- **Edit() — default.** When changes are localized (a few headings, frontmatter removal,
-  emoji stripping, annotation insertion), use targeted Edit() calls. Each call transmits
-  only the changed portion, so 5 edits on a 100-line file ≈ 200 tokens.
-
-- **Write() — exception.** When normalization requires pervasive restructuring (reordering
-  sections, converting most bullets to tables, rewriting 80%+ of lines), the cumulative
-  overhead of dozens of Edit() calls exceeds a single Write(). In that case, Read() the
-  file, restructure in full, and Write() once. This is rare — most documents need only
-  localized cleanup.
-
-**How to decide:** estimate how many Edit() calls you'd need. If <10, use Edit().
-If 30+, Write() is likely cheaper. In between, use judgment.
-
-Typical Edit() sequence:
+Each Edit() targets a specific string and replaces it. Example:
 ```
 Edit("---\ntags:...\n---\n", "")              ← remove YAML frontmatter
 Edit("## 🏛️ Section", "## Section")           ← strip emoji from heading
@@ -86,7 +75,8 @@ Edit("## Duplicate Title\n\n", "")             ← remove redundant heading
 ```
 
 The converter turns markdown into 5x more XML. Every token saved in the input
-saves 5x in the output — this is why Edit() is the default.
+saves 5x in the output. A 100-line file: 15 Edit() calls ≈ 750 tokens,
+Write() the whole file ≈ 6000 tokens. Always use Edit().
 
 Typical cleanup tasks:
 - Restructure where needed (bullet→table conversions, condensing repetitive content)
