@@ -1,0 +1,23 @@
+{
+  "name": "",
+  "owner": {
+    "name": "",
+    "url": "",
+    "email": ""
+  },
+  "metadata": {
+    "description": "",
+    "version": ""
+  },
+  "plugins": [
+    {
+      "name": "",
+      "source": "",
+      "version": "",
+      "description": "",
+      "category": "",
+      "skills": [],
+      "commands": []
+    }
+  ]
+}
