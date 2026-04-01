@@ -115,9 +115,7 @@ https://github.com/tjdwls101010/I-Hate-Hancom_for_Claude.git
 
 마크다운 파일을 업로드하거나 자연어로 요청하면 Hancom 스킬이 자동으로 트리거된다:
 
-![](https://raw.githubusercontent.com/tjdwls101010/DUMOK/main/Images/usage.mp4)
-
-> GitHub에서 동영상이 보이지 않으면 [직접 링크](https://raw.githubusercontent.com/tjdwls101010/DUMOK/main/Images/usage.mp4)로 확인.
+https://github.com/user-attachments/assets/e0a84763-50e5-43fb-802d-2af6ba8a9c03
 
 Claude Code에서 자연어로 요청하면 된다:
 
