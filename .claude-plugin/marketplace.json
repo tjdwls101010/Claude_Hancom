@@ -1,28 +1,20 @@
 {
   "name": "i-hate-hancom-marketplace",
-  "version": "1.0.0",
   "description": "I-Hate-Hancom for Claude — Markdown → HWPX 자동 변환 스킬",
   "owner": {
     "name": "seongjin",
-    "url": "https://github.com/seongjin"
+    "email": "tjdwls101010@github.com"
   },
   "plugins": [
     {
       "name": "i-hate-hancom",
-      "source": ".",
+      "description": "마크다운/텍스트를 정부 공문서 수준의 HWPX 문서로 자동 변환하는 Claude Code 스킬.",
       "version": "1.0.0",
-      "description": "마크다운/텍스트를 정부 공문서 수준의 HWPX 문서로 자동 변환하는 Claude Code 스킬. 한국 정부 모범 문서를 참조한 디자인, ▢/○/▷ 기호 체계, 표, 이미지, 강조 박스를 지원한다.",
-      "category": "productivity",
-      "keywords": [
-        "hancom",
-        "hwpx",
-        "hwp",
-        "한컴",
-        "한글",
-        "document",
-        "markdown",
-        "korea"
-      ]
+      "source": "./",
+      "author": {
+        "name": "seongjin",
+        "email": "tjdwls101010@github.com"
+      }
     }
   ]
 }

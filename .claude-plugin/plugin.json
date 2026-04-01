@@ -1,11 +1,13 @@
 {
   "name": "i-hate-hancom",
-  "version": "1.0.0",
   "description": "Markdown → HWPX 자동 변환 Claude Code Skill. 한컴 서식 없이 정부 공문서 수준의 HWPX 문서를 생성한다.",
+  "version": "1.0.0",
   "author": {
-    "name": "seongjin"
+    "name": "seongjin",
+    "email": "tjdwls101010@github.com"
   },
-  "repository": "https://github.com/seongjin/I-Hate-Hancom_for_Claude",
+  "homepage": "https://github.com/tjdwls101010/I-Hate-Hancom_for_Claude",
+  "repository": "https://github.com/tjdwls101010/I-Hate-Hancom_for_Claude",
   "license": "MIT",
   "keywords": [
     "hancom",
