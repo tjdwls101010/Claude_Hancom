@@ -22,7 +22,8 @@ CHAR = {
     'title': '19',       # 26pt 바탕체 bold — main title
     'body': '12',        # 14pt 함초롬돋움 — standard body
     'bold': '20',        # 14pt 함초롬돋움 bold — keyword emphasis (same size as body)
-    'shade': '4',        # 15pt 함초롬바탕 bold, shade=#FFD700 — ○-level
+    'shade': '4',        # 15pt 함초롬바탕 bold, shade=#FFD700 — ▢ level
+    'sky_shade': '21',   # 14pt 함초롬돋움 bold, shade=#87CEEB — ○ level
     'table_body': '18',  # 12pt 바탕 — table cells
     'table_head': '13',  # 12pt 돋움체 bold — table headers
     'caption': '16',     # 12pt 맑은고딕 bold — < Caption >
@@ -127,53 +128,120 @@ def _split_bold_runs(text, default_char, bold_char):
     return runs
 
 
-def emit_bullet(text, level=0):
-    """Emit a bullet item. Level 0 = □, level 1 = ○ (under ##)."""
-    # Check for bold keyword pattern: **(keyword)** value
+CIRCLED_NUMBERS = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳'
+
+
+def emit_bullet(text, indent=False):
+    """Emit a bullet item with ▷ symbol. indent=True for deeper sub-items."""
     bold_match = re.match(r'\*\*\((.+?)\)\*\*\s*(.*)', text)
     bold_match2 = re.match(r'\*\*(.+?)\*\*:\s*(.*)', text)
 
-    symbol = '□' if level == 0 else '○'
-    para = PARA['bullet'] if level == 0 else PARA['sub_item']
+    if indent:
+        # Deeper sub-item: ▷ with extra indent
+        runs = _split_bold_runs(text, CHAR['body'], CHAR['bold'])
+        return p_multi_run(PARA['sub_item'], [
+            (CHAR['body'], '  ▷ '),
+        ] + runs)
 
     if bold_match:
-        # symbol (keyword) explanation
-        return p_multi_run(para, [
-            (CHAR['body'], f'{symbol} '),
+        return p_multi_run(PARA['sub_item'], [
+            (CHAR['body'], '▷ '),
             (CHAR['bold'], f'({bold_match.group(1)})'),
             (CHAR['body'], f' {bold_match.group(2)}'),
         ])
     elif bold_match2:
-        # symbol keyword: value
-        return p_multi_run(para, [
-            (CHAR['body'], f'{symbol} '),
+        return p_multi_run(PARA['sub_item'], [
+            (CHAR['body'], '▷ '),
             (CHAR['bold'], bold_match2.group(1)),
             (CHAR['body'], f': {bold_match2.group(2)}'),
         ])
     else:
-        # Split any remaining **bold** in the text
         runs = _split_bold_runs(text, CHAR['body'], CHAR['bold'])
-        return p_multi_run(para, [
-            (CHAR['body'], f'{symbol} '),
+        return p_multi_run(PARA['sub_item'], [
+            (CHAR['body'], '▷ '),
         ] + runs)
 
 
-def emit_heading2(text, page_break=False):
-    """Emit ## heading as □ section-level (gold shade, no parentheses)."""
-    # Remove numbering like "1. " or "2.1 "
-    clean = re.sub(r'^[\d.]+\s*', '', text).strip()
-    return p_multi_run(PARA['bullet'], [
-        (CHAR['body'], '□ '),
-        (CHAR['shade'], clean),
-    ], page_break=page_break)
+def emit_numbered_item(number, text):
+    """Emit a numbered item with circled number ①②③."""
+    idx = number - 1
+    if 0 <= idx < len(CIRCLED_NUMBERS):
+        symbol = CIRCLED_NUMBERS[idx]
+    else:
+        symbol = f'{number}.'
+    runs = _split_bold_runs(text, CHAR['body'], CHAR['bold'])
+    return p_multi_run(PARA['sub_item'], [
+        (CHAR['body'], f'{symbol} '),
+    ] + runs)
+
+
+def emit_section_header(text):
+    """Emit ## heading as section header (green table or ▢ gold shade).
+    If text has a number prefix (e.g., '1. 개요'), emit green table.
+    Otherwise emit ▢ gold shade heading."""
+    num_match = re.match(r'^(\d+)[\.\s]+(.+)', text.strip())
+    if num_match:
+        number = num_match.group(1)
+        title = num_match.group(2).strip()
+        return _emit_section_header_table(number, title)
+    else:
+        clean = text.strip()
+        return p_multi_run(PARA['bullet'], [
+            (CHAR['body'], '▢ '),
+            (CHAR['shade'], clean),
+        ])
+
+
+def _emit_section_header_table(number, title):
+    """Emit the 2x4 green table section header (copied from catalog structure)."""
+    return (
+        f'<hp:p id="0" paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0">'
+        f'<hp:run charPrIDRef="{CHAR["small"]}">'
+        f'<hp:tbl rowCnt="1" colCnt="2" cellSpacing="0" borderFillIDRef="{BF["cell"]}"'
+        f' pageBreak="CELL" repeatHeader="0" id="0">'
+        f'<hp:tr>'
+        f'<hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="{BF["green_fill"]}">'
+        f'<hp:cellAddr colAddr="0" rowAddr="0"/>'
+        f'<hp:cellSpan colSpan="1" rowSpan="1"/>'
+        f'<hp:cellSz width="3500" height="1600"/>'
+        f'<hp:cellMargin left="283" right="283" top="141" bottom="141"/>'
+        f'<hp:subList>'
+        f'<hp:p paraPrIDRef="{PARA["table_cell"]}" styleIDRef="0">'
+        f'<hp:run charPrIDRef="{CHAR["sec_num"]}"><hp:t>{number}</hp:t></hp:run>'
+        f'</hp:p>'
+        f'</hp:subList>'
+        f'</hp:tc>'
+        f'<hp:tc name="" header="0" hasMargin="0" protect="0" editable="0" dirty="0" borderFillIDRef="{BF["cell"]}">'
+        f'<hp:cellAddr colAddr="1" rowAddr="0"/>'
+        f'<hp:cellSpan colSpan="1" rowSpan="1"/>'
+        f'<hp:cellSz width="16500" height="1600"/>'
+        f'<hp:cellMargin left="283" right="283" top="141" bottom="141"/>'
+        f'<hp:subList>'
+        f'<hp:p paraPrIDRef="{PARA["table_cell"]}" styleIDRef="0">'
+        f'<hp:run charPrIDRef="{CHAR["sec_title"]}"><hp:t>{title}</hp:t></hp:run>'
+        f'</hp:p>'
+        f'</hp:subList>'
+        f'</hp:tc>'
+        f'</hp:tr>'
+        f'</hp:tbl></hp:run></hp:p>\n'
+    )
 
 
 def emit_heading3(text):
-    """Emit ### heading as ○ sub-section (bold, no shade)."""
+    """Emit ### heading as ▢ sub-section (gold shade)."""
+    clean = re.sub(r'^[\d.]+\s*', '', text).strip()
+    return p_multi_run(PARA['bullet'], [
+        (CHAR['body'], '▢ '),
+        (CHAR['shade'], clean),
+    ])
+
+
+def emit_heading4(text):
+    """Emit #### heading as ○ sub-sub-section (sky blue shade)."""
     clean = re.sub(r'^[\d.]+\s*', '', text).strip()
     return p_multi_run(PARA['bullet'], [
         (CHAR['body'], '○ '),
-        (CHAR['bold'], clean),
+        (CHAR['sky_shade'], clean),
     ])
 
 
@@ -310,7 +378,7 @@ def convert(md_text):
     pending_pagebreak = False
     pending_table_style = 'data'
     is_first_element = True
-    under_h2 = False  # track if we're under a ## heading (bullets become sub-items)
+    heading_level = 0  # track current heading context for bullet hierarchy
 
     while i < len(lines):
         line = lines[i]
@@ -374,6 +442,17 @@ def convert(md_text):
             i += 1
             continue
 
+        if stripped.startswith('#### '):
+            heading = stripped[5:].strip()
+            if not is_first_element:
+                xml_parts.append(spacer())
+            xml_parts.append(emit_heading4(heading))
+            xml_parts.append(spacer())
+            is_first_element = False
+            heading_level = 4
+            i += 1
+            continue
+
         if stripped.startswith('### '):
             heading = stripped[4:].strip()
             if not is_first_element:
@@ -381,19 +460,24 @@ def convert(md_text):
             xml_parts.append(emit_heading3(heading))
             xml_parts.append(spacer())
             is_first_element = False
-            under_h2 = True  # ### is under ##, bullets stay as sub-items
+            heading_level = 3
             i += 1
             continue
 
         if stripped.startswith('## '):
             heading = stripped[3:].strip()
+            # ## always starts a new page (unless it's the first element)
             if not is_first_element:
                 xml_parts.append(spacer())
-            xml_parts.append(emit_heading2(heading, page_break=pending_pagebreak))
+            result = emit_section_header(heading)
+            # Inject pageBreak="1" if not the first element
+            if not is_first_element:
+                result = result.replace('pageBreak="0"', 'pageBreak="1"', 1)
+            xml_parts.append(result)
             xml_parts.append(spacer())
             pending_pagebreak = False
             is_first_element = False
-            under_h2 = True  # bullets after ## become sub-items
+            heading_level = 2
             i += 1
             continue
 
@@ -417,29 +501,21 @@ def convert(md_text):
         # ── Bullet items ──
         bullet_match = re.match(r'^(\s*)- (.+)', line)
         if bullet_match:
-            indent = len(bullet_match.group(1))
+            indent_level = len(bullet_match.group(1))
             text = bullet_match.group(2).strip()
-            # Under ## or ###: top-level bullets become sub-items
-            if under_h2 and indent < 2:
-                level = 1  # force sub-item level under headings
-            else:
-                level = 1 if indent >= 2 else 0
-            # No spacer between consecutive bullets at same level
-            xml_parts.append(emit_bullet(text, level))
+            is_indented = indent_level >= 2
+            xml_parts.append(emit_bullet(text, indent=is_indented))
             is_first_element = False
             i += 1
             continue
 
         # ── Numbered list ──
-        num_match = re.match(r'^(\s*)\d+\.\s+(.+)', line)
+        num_match = re.match(r'^(\s*)(\d+)\.\s+(.+)', line)
         if num_match:
-            text = num_match.group(2).strip()
-            indent = len(num_match.group(1))
-            if under_h2 and indent < 2:
-                level = 1
-            else:
-                level = 1 if indent >= 2 else 0
-            xml_parts.append(emit_bullet(text, level))
+            indent_level = len(num_match.group(1))
+            number = int(num_match.group(2))
+            text = num_match.group(3).strip()
+            xml_parts.append(emit_numbered_item(number, text))
             is_first_element = False
             i += 1
             continue
