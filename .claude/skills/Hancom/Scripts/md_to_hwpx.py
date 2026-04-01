@@ -104,7 +104,14 @@ def emit_title(text):
 
 
 def emit_body(text):
-    """Emit body paragraph with full-width indent."""
+    """Emit body paragraph with full-width indent and bold support."""
+    if '**' in text:
+        runs = _split_bold_runs(text, CHAR['body'], CHAR['bold'])
+        # Add full-width indent to first run
+        if runs:
+            first_char, first_text = runs[0]
+            runs[0] = (first_char, f'\u3000\u3000{first_text}')
+        return p_multi_run(PARA['default'], runs)
     return p(PARA['default'], CHAR['body'], f'\u3000\u3000{text}')
 
 
@@ -162,11 +169,11 @@ def emit_heading2(text, page_break=False):
 
 
 def emit_heading3(text):
-    """Emit ### heading as ○ sub-section (gold shade)."""
+    """Emit ### heading as ○ sub-section (bold, no shade)."""
     clean = re.sub(r'^[\d.]+\s*', '', text).strip()
     return p_multi_run(PARA['bullet'], [
         (CHAR['body'], '○ '),
-        (CHAR['shade'], clean),
+        (CHAR['bold'], clean),
     ])
 
 
@@ -237,10 +244,22 @@ def emit_box(content_lines, box_type='note'):
         line = line.strip()
         if not line:
             continue
-        escaped = line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-        inner_xml += (f'<hp:p paraPrIDRef="{PARA["default"]}" styleIDRef="0">'
-                      f'<hp:run charPrIDRef="{char}"><hp:t>{escaped}</hp:t></hp:run>'
-                      f'</hp:p>\n')
+        # Strip bullet prefix if present
+        if line.startswith('- '):
+            line = line[2:]
+        if '**' in line:
+            runs = _split_bold_runs(line, char, CHAR['bold'])
+            run_xml = ''
+            for rc, rt in runs:
+                esc = rt.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                run_xml += f'<hp:run charPrIDRef="{rc}"><hp:t>{esc}</hp:t></hp:run>'
+            inner_xml += (f'<hp:p paraPrIDRef="{PARA["default"]}" styleIDRef="0">'
+                          f'{run_xml}</hp:p>\n')
+        else:
+            escaped = line.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            inner_xml += (f'<hp:p paraPrIDRef="{PARA["default"]}" styleIDRef="0">'
+                          f'<hp:run charPrIDRef="{char}"><hp:t>{escaped}</hp:t></hp:run>'
+                          f'</hp:p>\n')
 
     xml = (f'<hp:p id="0" paraPrIDRef="0" styleIDRef="0"'
            f' pageBreak="0" columnBreak="0" merged="0">'
