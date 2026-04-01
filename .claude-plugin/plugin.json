@@ -5,7 +5,7 @@
   "author": {
     "name": "seongjin"
   },
-  "repository": "https://github.com/seongjin/I-Hate-Hancom",
+  "repository": "https://github.com/seongjin/I-Hate-Hancom_for_Claude",
   "license": "MIT",
   "keywords": [
     "hancom",
@@ -19,5 +19,5 @@
     "korea",
     "government"
   ],
-  "skills": "./skills/"
+  "skills": "./.claude/skills/"
 }
