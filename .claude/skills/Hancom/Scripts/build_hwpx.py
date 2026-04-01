@@ -388,7 +388,7 @@ def build_hwpx(args: argparse.Namespace) -> str:
         secpr_template_path = os.path.join(template_dir, "secpr_template.xml")
         for src, name in zip(section_inputs, section_names):
             dst = os.path.join(contents_dir, name)
-            shutil.copy2(src, dst)
+            shutil.copy(src, dst)
             # Auto-inject secPr if the section doesn't contain one
             with open(dst, "r", encoding="utf-8") as f:
                 sec_content = f.read()
@@ -416,7 +416,7 @@ def build_hwpx(args: argparse.Namespace) -> str:
         # 3. Optional header override
         if header_override:
             dst = os.path.join(contents_dir, "header.xml")
-            shutil.copy2(header_override, dst)
+            shutil.copy(header_override, dst)
             print(f"[INFO] Header override: {header_override}")
 
         # 4. Copy images to BinData/
@@ -425,7 +425,7 @@ def build_hwpx(args: argparse.Namespace) -> str:
             os.makedirs(bindata_dir, exist_ok=True)
             for src, name in zip(image_inputs, image_names):
                 dst = os.path.join(bindata_dir, name)
-                shutil.copy2(src, dst)
+                shutil.copy(src, dst)
                 print(f"[INFO] Image: BinData/{name} <- {src}")
 
         # 5. Generate container.rdf
@@ -511,7 +511,7 @@ def _copy_template(src_dir: str, dst_dir: str) -> None:
                 continue
             src_file = os.path.join(root, fname)
             dst_file = os.path.join(dst_root, fname)
-            shutil.copy2(src_file, dst_file)
+            shutil.copy(src_file, dst_file)
 
 
 # ---------------------------------------------------------------------------
